@@ -22,31 +22,55 @@ def reply_all(**kwargs):
     username = kwargs.get('sender')
     sender = kwargs.get('receiver')
     message_type = kwargs.get('type')
-    content = kwargs.get('content', message_type)
 
-    if content == 'music':
-        return weixin.reply(
-            username, type='music', sender=sender,
-            title='Weixin Music',
-            description='weixin description',
-            music_url=jing_music,
-            hq_music_url=jing_music,
-        )
-    elif content == 'news':
-        return weixin.reply(
-            username, type='news', sender=sender,
-            articles=[
-                {
-                    'title': 'Weixin News',
-                    'description': 'weixin description',
-                    'picurl': '',
-                    'url': 'http://lepture.com/',
-                }
-            ]
-        )
+    # event message reply
+    if message_type == 'event':
+        message_key  = kwargs.get('event_key')
+        # need to config a button {"type": "click","name": "MUSIC","key": "EVENT_MUSIC"}
+        if message_key == 'EVENT_MUSIC':
+            return weixin.reply(
+                username, type='music', sender=sender,
+                title='Weixin Music',
+                description='weixin description',
+                music_url=jing_music,
+                hq_music_url=jing_music,
+            )
+        else:
+            return weixin.reply(
+                username, sender=sender, content=message_key
+            )
+    # text message reply
+    elif message_type == 'text':
+        content = kwargs.get('content', message_type)
+
+        if content == 'music':
+            return weixin.reply(
+                username, type='music', sender=sender,
+                title='Weixin Music',
+                description='weixin description',
+                music_url=jing_music,
+                hq_music_url=jing_music,
+            )
+        elif content == 'news':
+            return weixin.reply(
+                username, type='news', sender=sender,
+                articles=[
+                    {
+                        'title': 'Weixin News',
+                        'description': 'weixin description',
+                        'picurl': '',
+                        'url': 'http://lepture.com/',
+                    }
+                ]
+            )
+        else:
+            return weixin.reply(
+                username, sender=sender, content=content
+            )
+    # other message type reply
     else:
         return weixin.reply(
-            username, sender=sender, content=content
+            username, sender=sender, content='i don\'t deal with this message type'
         )
 
 
